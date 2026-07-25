@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+
+# Exported personal data — keep training logs out of the app repo
+training-data.json
+training-log.md
