@@ -495,6 +495,7 @@ function go(tab){ current=tab;
   Array.prototype.forEach.call(document.querySelectorAll('.tabbar button'),function(b){
     b.classList.toggle('on', b.getAttribute('data-tab')===tab); });
   render();
+  window.scrollTo(0,0);   // jump to top only on tab switch
 }
 function render(){
   var m=document.getElementById('main');
@@ -502,8 +503,7 @@ function render(){
   else if(current==='runs') m.innerHTML=viewRuns();
   else if(current==='progress') m.innerHTML=viewProgress();
   else if(current==='goals') m.innerHTML=viewGoals();
-  wire();
-  window.scrollTo(0,0);
+  wire();   // in-place re-renders (expand/collapse, save, edits) keep scroll position
 }
 
 /* =========================== LOG (LIFT) =========================== */
