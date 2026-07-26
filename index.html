@@ -218,6 +218,20 @@ if(!document.querySelector('meta[name=viewport]')){
   mv.content='width=device-width, initial-scale=1, viewport-fit=cover';
   (document.head||document.documentElement).appendChild(mv);
 }
+/* PWA: installable + offline (no-ops harmlessly inside the sandboxed claude.ai artifact) */
+(function pwa(){
+  var head=document.head||document.documentElement;
+  function add(tag,attrs){ var el=document.createElement(tag); for(var k in attrs) el.setAttribute(k,attrs[k]); head.appendChild(el); }
+  if(!document.querySelector('link[rel=manifest]')) add('link',{rel:'manifest',href:'manifest.webmanifest'});
+  add('meta',{name:'apple-mobile-web-app-capable',content:'yes'});
+  add('meta',{name:'apple-mobile-web-app-status-bar-style',content:'black-translucent'});
+  add('meta',{name:'apple-mobile-web-app-title',content:'Tracker'});
+  add('meta',{name:'theme-color',content:'#0f1115'});
+  add('link',{rel:'apple-touch-icon',href:'icon.svg'});
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){ try{ navigator.serviceWorker.register('sw.js').catch(function(){}); }catch(e){} });
+  }
+})();
 
 /* =========================================================================
    PROGRAM DEFINITION  (Phase 2 — July, "Jackson")

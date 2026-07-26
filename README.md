@@ -22,6 +22,8 @@ Everything is stored in your browser (`localStorage`). Use the **⋯ menu → Da
 - **Export JSON** — full backup; re-import to restore or move data between devices.
 - **Export Markdown** — a readable training log.
 
-## Run it
-Open `training-tracker.html` in a browser. On a phone, use **Share → Add to Home Screen** for an
-app-like, offline experience.
+## Run it / deploy
+Open `index.html` in a browser. Served from static hosting (Netlify, Cloudflare Pages, GitHub Pages)
+it's an installable **PWA**: **Share → Add to Home Screen** gives an app icon that opens instantly
+and works **offline** (a service worker caches the app shell; `manifest.webmanifest` + `icon.svg`
+included).
