@@ -1,5 +1,5 @@
 /* Offline service worker — caches the self-contained app shell */
-const CACHE = 'tt-cache-v1';
+const CACHE = 'tt-cache-v2';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', e => {
