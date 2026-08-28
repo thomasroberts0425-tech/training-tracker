@@ -533,7 +533,7 @@ function viewLift(){
      '<label class="fld" style="flex:1;min-width:90px">Week<select id="liftWeek">'+[1,2,3,4,5].map(function(w){return '<option value="'+w+'"'+(w===wk?' selected':'')+'>Week '+w+(w===5?' (deload)':'')+'</option>';}).join('')+'</select></label>'+
      '</div>';
   h+='<div class="row" style="margin-top:10px">'+prog().days.map(function(d){return '<button class="chip daychip'+(d.key===liftCtx.day?' on':'')+'" data-day="'+d.key+'">'+d.key+'</button>';}).join('')+'</div>';
-  h+='<div class="small muted" style="margin-top:10px">'+esc(day.title)+(wk===5?' · <b>deload</b>':'')+(saved&&saved.finished?' · <span style="color:var(--good);font-weight:700">✓ finished</span>':(saved?' · <span class="saved-ind">saving…</span>':''))+'</div>';
+  h+='<div class="small muted" style="margin-top:10px">'+esc(day.title)+(wk===5?' · <b>deload</b>':'')+(saved&&saved.finished?' · <span style="color:var(--good);font-weight:700">✓ finished</span>':(saved?' · <span id="saveInd" class="saved-ind">saved ✓</span>':''))+'</div>';
   h+='<div class="small faint" style="margin-top:6px">Autosaves as you type. RPE (1–10) on main lifts drives recovery.</div></div>';
 
   day.blocks.forEach(function(b){
@@ -542,7 +542,7 @@ function viewLift(){
       var d=draftFor(e.id);
       if(e.kind==='aux'){
         var done=d&&d.done;
-        h+='<div class="ex'+(done?' done':'')+'"><div class="auxbox"><input type="checkbox" class="f-done" data-ex="'+e.id+'"'+(done?' checked':'')+'>'+
+        h+='<div class="ex'+(done?' done':'')+'" data-ex="'+e.id+'"><div class="auxbox"><input type="checkbox" class="f-done"'+(done?' checked':'')+'>'+
            '<div class="meta"><div class="nm">'+esc(e.name)+'</div><div class="tg">'+esc(e.target)+(e.cue?' · '+esc(e.cue):'')+'</div></div></div></div>';
       } else {
         var targets=e.w[wk]||[], isOpen=!!liftCtx.open[e.id], hasData=d&&d.sets&&d.sets.some(function(s){return (s.weight!=null&&s.weight!=='')||(s.reps!=null&&s.reps!=='');});
@@ -599,11 +599,13 @@ function autosaveLift(){
     }
   });
   var existing=currentSession();
-  if(!entries.length){ if(existing){ state.liftLogs=state.liftLogs.filter(function(s){return s!==existing;}); save(); } return; }
+  var si=document.getElementById('saveInd');
+  if(!entries.length){ if(existing){ state.liftLogs=state.liftLogs.filter(function(s){return s!==existing;}); save(); } if(si) si.textContent=''; return; }
   var rec=existing||{id:uid(),finished:false};
   rec.prog=liftCtx.prog; rec.dateISO=liftCtx.dateISO; rec.day=liftCtx.day; rec.week=liftCtx.week; rec.entries=entries;
   if(!existing) state.liftLogs.push(rec);
   save();
+  if(si) si.textContent='saved ✓';
 }
 function finishWorkout(){
   autosaveLift();
@@ -804,7 +806,7 @@ function syncSegs(){ Array.prototype.forEach.call(document.querySelectorAll('#un
 
 /* ============================ WIRING ============================ */
 var saveTimer=null;
-function debouncedAutosave(fn){ clearTimeout(saveTimer); saveTimer=setTimeout(fn,400); }
+function debouncedAutosave(fn){ var si=document.getElementById('saveInd'); if(si) si.textContent='saving…'; clearTimeout(saveTimer); saveTimer=setTimeout(fn,400); }
 function wire(){
   // lift toggles
   Array.prototype.forEach.call(document.querySelectorAll('[data-toggle]'),function(el){ el.addEventListener('click',function(){ autosaveLift(); var id=el.getAttribute('data-toggle'); liftCtx.open[id]=!liftCtx.open[id]; render(); }); });
